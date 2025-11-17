@@ -49,7 +49,7 @@ public class SpawnManager {
         yMax = config.getInt("spawn.y.max", 128);
         zMin = config.getInt("spawn.z.min", -1000);
         zMax = config.getInt("spawn.z.max", 1000);
-        preventFallDamage = config.getBoolean("spawn.prevent-fall-damage", false);
+        forceGroundSpawn = config.getBoolean("spawn.force-ground-spawn", true);
         enableFirstJoinSpawn = config.getBoolean("events.first-join", true);
         enableRespawnOnDeath = config.getBoolean("events.respawn-on-death", true);
         transferServerName = config.getString("spawn.transfer-to-server", "");

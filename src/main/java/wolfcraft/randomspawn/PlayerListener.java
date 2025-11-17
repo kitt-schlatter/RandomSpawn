@@ -12,12 +12,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class PlayerListener implements Listener {
     private final RandomSpawn plugin;
     private final SpawnManager spawnManager;
-    private final Set<UUID> fallingSpawnedPlayers;
 
     public PlayerListener(RandomSpawn plugin, SpawnManager spawnManager) {
         this.plugin = plugin;
         this.spawnManager = spawnManager;
-        this.fallingSpawnedPlayers = new HashSet<>();
     }
 
     @EventHandler(priority = EventPriority.HIGH)
