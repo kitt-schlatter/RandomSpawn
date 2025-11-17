@@ -26,7 +26,7 @@ spawn:
   allow-midair-spawn: false
 
   # If true, prevents fall damage from the player's first landing after being spawned
-  prevent-fall-damage: true
+  prevent-fall-damage: false
   
   # Maximum number of attempts to find a safe spawn location
   max-tries: 50
