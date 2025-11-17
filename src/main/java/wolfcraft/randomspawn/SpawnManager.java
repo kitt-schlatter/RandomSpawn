@@ -26,6 +26,8 @@ public class SpawnManager {
     private int zMin;
     private int zMax;
     private boolean forceGroundSpawn;
+    private boolean allowMidairSpawn;
+    private boolean preventFallDamage;
     private boolean enableFirstJoinSpawn;
     private boolean enableRespawnOnDeath;
     private int maxTries;
@@ -49,6 +51,8 @@ public class SpawnManager {
         zMin = config.getInt("spawn.z.min", -1000);
         zMax = config.getInt("spawn.z.max", 1000);
         forceGroundSpawn = config.getBoolean("spawn.force-ground-spawn", true);
+        allowMidairSpawn = config.getBoolean("spawn.allow-midair-spawn", false);
+        preventFallDamage = config.getBoolean("spawn.prevent-fall-damage", false);
         enableFirstJoinSpawn = config.getBoolean("events.first-join", true);
         enableRespawnOnDeath = config.getBoolean("events.respawn-on-death", true);
         maxTries = config.getInt("spawn.max-tries", 50);
@@ -71,6 +75,10 @@ public class SpawnManager {
 
     public boolean isRespawnOnDeathEnabled() {
         return enableRespawnOnDeath;
+    }
+
+    public boolean isPreventFallDamageEnabled() {
+        return preventFallDamage;
     }
 
     public boolean isWorldEnabled(String worldName) {
@@ -134,8 +142,8 @@ public class SpawnManager {
             Block blockAbove = world.getBlockAt(x, y + 1, z);
             Block blockTwoAbove = world.getBlockAt(x, y + 2, z);
 
-            if (!block.getType().isAir() && 
-                blockAbove.getType().isAir() && 
+            if (!block.getType().isAir() &&
+                blockAbove.getType().isAir() &&
                 blockTwoAbove.getType().isAir() &&
                 !block.isLiquid() &&
                 !isFatalBlock(block.getType().toString())) {
@@ -157,9 +165,9 @@ public class SpawnManager {
         Block blockAbove = location.clone().add(0, 1, 0).getBlock();
 
         if (!forceGroundSpawn) {
-            return block.getType().isAir() && 
+            return block.getType().isAir() &&
                    blockAbove.getType().isAir() &&
-                   !blockBelow.getType().isAir() &&
+                   (!blockBelow.getType().isAir() || allowMidairSpawn) &&
                    !blockBelow.isLiquid() &&
                    !isFatalBlock(blockBelow.getType().toString());
         }
@@ -188,7 +196,7 @@ public class SpawnManager {
             locations.remove(locArray[random.nextInt(locArray.length)]);
         }
     }
-    
+
     private int randomBetween(int min, int max) {
         if (min > max) {
             int temp = min;

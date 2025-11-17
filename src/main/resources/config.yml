@@ -20,6 +20,13 @@ spawn:
   # If true, players will always spawn on the surface
   # This will disable the Y coordinate range setting above
   force-ground-spawn: true
+
+  # If true, players can spawn in midair
+  # This might result in fall damage if prevent-fall-damage is false
+  allow-midair-spawn: false
+
+  # If true, prevents fall damage from the player's first landing after being spawned
+  prevent-fall-damage: true
   
   # Maximum number of attempts to find a safe spawn location
   max-tries: 50
@@ -56,4 +63,3 @@ messages:
   prefix: "&6[RandomSpawn] &r"
   reload: "&aConfiguration reloaded successfully!"
   no-permission: "&cYou don't have permission to use this command!"
-

@@ -1,5 +1,8 @@
 package wolfcraft.randomspawn;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,21 +10,24 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerListener implements Listener {
     private final RandomSpawn plugin;
     private final SpawnManager spawnManager;
-    
+    private final Set<UUID> fallingSpawnedPlayers;
+
     public PlayerListener(RandomSpawn plugin, SpawnManager spawnManager) {
         this.plugin = plugin;
         this.spawnManager = spawnManager;
+        this.fallingSpawnedPlayers = new HashSet<>();
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        
+
         // Only teleport on first join
         if (!player.hasPlayedBefore() && spawnManager.isFirstJoinEnabled()) {
             // Delay the teleport to ensure the player is fully loaded
@@ -35,27 +41,48 @@ public class PlayerListener implements Listener {
             }.runTaskLater(plugin, 5L); // 5 ticks = 0.25 seconds
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         // Don't override if player has a bed or anchor respawn
         if (!event.isBedSpawn() && !event.isAnchorSpawn() && spawnManager.isRespawnOnDeathEnabled()) {
             Player player = event.getPlayer();
-            
+
             // Only apply to worlds that are enabled
             if (spawnManager.isWorldEnabled(player.getWorld().getName())) {
                 Location randomLocation = spawnManager.getRandomSpawnLocation(player);
-                
+
                 if (randomLocation != null) {
                     event.setRespawnLocation(randomLocation);
+
+                    // If fall damage prevention is enabled, add them to the list of potentially falling players
+                    if (spawnManager.isPreventFallDamageEnabled()) {
+                        fallingSpawnedPlayers.add(player.getUniqueId());
+                    }
                 }
             }
         }
     }
-    
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+
+        if (spawnManager.isPreventFallDamageEnabled() &&
+            fallingSpawnedPlayers.contains(uuid) &&
+            player.isOnGround()) {
+                // The player has fall damage prevention enabled, is currently falling after a spawn,
+                // but has now touched ground, so we need to negate the fall damage and remove them from the falling players list
+                player.setFallDistance(0f);
+                fallingSpawnedPlayers.remove(uuid);
+            }
+        }  
+    }
+
     private void teleportToRandomSpawn(Player player) {
         Location randomLocation = spawnManager.getRandomSpawnLocation(player);
-        
+
         if (randomLocation != null) {
             player.teleport(randomLocation);
         }
