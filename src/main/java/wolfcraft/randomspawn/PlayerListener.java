@@ -70,7 +70,6 @@ public class PlayerListener implements Listener {
                 // but has now touched ground, so we need to negate the fall damage and remove them from the falling players list
                 player.setFallDistance(0f);
                 fallingSpawnedPlayers.remove(uuid);
-            }
         }  
     }
 
