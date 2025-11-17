@@ -21,13 +21,6 @@ spawn:
   # This will disable the Y coordinate range setting above
   force-ground-spawn: true
 
-  # If true, players can spawn in midair
-  # This might result in fall damage if prevent-fall-damage is false
-  allow-midair-spawn: false
-
-  # If true, prevents fall damage from the player's first landing after being spawned
-  prevent-fall-damage: true
-
   # If set, players will be transferred to the specified server after spawning (supports BungeeCord/Waterfall/Velocity)
   transfer-to-server: ''
   
