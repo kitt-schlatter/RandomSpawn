@@ -31,6 +31,7 @@ public class SpawnManager {
     private boolean enableFirstJoinSpawn;
     private boolean enableRespawnOnDeath;
     private int maxTries;
+    private String transferServerName;
     private Set<String> enabledWorlds;
     private Set<String> fatalBlocks;
 
@@ -55,6 +56,7 @@ public class SpawnManager {
         preventFallDamage = config.getBoolean("spawn.prevent-fall-damage", false);
         enableFirstJoinSpawn = config.getBoolean("events.first-join", true);
         enableRespawnOnDeath = config.getBoolean("events.respawn-on-death", true);
+        transferServerName = config.getString("spawn.transfer-to-server", "");
         maxTries = config.getInt("spawn.max-tries", 50);
         fatalBlocks = new HashSet<>();
         for (String block : config.getStringList("fatal-blocks")) {
@@ -83,6 +85,10 @@ public class SpawnManager {
 
     public boolean isWorldEnabled(String worldName) {
         return enabledWorlds.contains(worldName);
+    }
+
+    public String getTransferServerName() {
+        return transferServerName;
     }
 
     public Location getRandomSpawnLocation(Player player) {

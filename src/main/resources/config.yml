@@ -27,6 +27,9 @@ spawn:
 
   # If true, prevents fall damage from the player's first landing after being spawned
   prevent-fall-damage: true
+
+  # If set, players will be transferred to the specified server after spawning (supports BungeeCord/Waterfall/Velocity)
+  transfer-to-server: ''
   
   # Maximum number of attempts to find a safe spawn location
   max-tries: 50

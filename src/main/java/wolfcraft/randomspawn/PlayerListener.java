@@ -55,6 +55,19 @@ public class PlayerListener implements Listener {
                 if (randomLocation != null) {
                     event.setRespawnLocation(randomLocation);
                     setFallingPlayer(player);
+
+                    // If configured, transfer the player to another server after respawn
+                    if (spawnManager.getTransferServerName() != null && !spawnManager.getTransferServerName().isEmpty()) {
+                        // Delay the transfer to ensure the player is fully respawned
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (player.isOnline()) {
+                                    plugin.transferPlayerToServer(player, spawnManager.getTransferServerName());
+                                }
+                            }
+                        }.runTaskLater(plugin, 5L); // 5 ticks = 0.25 seconds
+                    }
                 }
             }
         }
@@ -84,7 +97,7 @@ public class PlayerListener implements Listener {
 
     private void setFallingPlayer(Player player) {
         if (spawnManager.isPreventFallDamageEnabled()) {
-            fallProtection.add(player.getUniqueId());
+            fallingSpawnedPlayers.add(player.getUniqueId());
         }
     }
 }

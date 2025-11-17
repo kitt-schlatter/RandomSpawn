@@ -9,6 +9,8 @@ import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 import java.util.List;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 public class RandomSpawn extends JavaPlugin {
     private FileConfiguration config;
@@ -26,6 +28,9 @@ public class RandomSpawn extends JavaPlugin {
 
         // Register event listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(this, spawnManager), this);
+
+        // Register BungeeCord channel
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
         getLogger().info("RandomSpawn has been enabled!");
     }
@@ -78,5 +83,18 @@ public class RandomSpawn extends JavaPlugin {
         reloadConfig();
         config = getConfig();
         spawnManager.reloadConfig();
+    }
+
+    public void transferPlayerToServer(Player player, String serverName) {
+        if (player == null || serverName == null || serverName.isEmpty()) return;
+
+        try {
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("Connect");
+            out.writeUTF(serverName);
+            player.sendPluginMessage(this, "BungeeCord", out.toByteArray());
+        } catch (NoClassDefFoundError | Exception e) {
+            getLogger().warning("Failed to send player to server '" + serverName + "': " + e.getMessage());
+        }
     }
 }
