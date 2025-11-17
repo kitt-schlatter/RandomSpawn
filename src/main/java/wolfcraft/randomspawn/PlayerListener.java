@@ -54,11 +54,7 @@ public class PlayerListener implements Listener {
 
                 if (randomLocation != null) {
                     event.setRespawnLocation(randomLocation);
-
-                    // If fall damage prevention is enabled, add the player to the list of potentially falling players
-                    if (spawnManager.isPreventFallDamageEnabled()) {
-                        fallingSpawnedPlayers.add(player.getUniqueId());
-                    }
+                    setFallingPlayer(player);
                 }
             }
         }
@@ -83,6 +79,13 @@ public class PlayerListener implements Listener {
 
         if (randomLocation != null) {
             player.teleport(randomLocation);
+            setFallingPlayer(player);
+        }
+    }
+
+    private void setFallingPlayer(Playher player) {
+        if (spawnManager.isPreventFallDamageEnabled()) {
+            fallProtection.add(player.getUniqueId());
         }
     }
 }
