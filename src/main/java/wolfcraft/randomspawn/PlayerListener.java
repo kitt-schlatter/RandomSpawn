@@ -83,7 +83,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    private void setFallingPlayer(Playher player) {
+    private void setFallingPlayer(Player player) {
         if (spawnManager.isPreventFallDamageEnabled()) {
             fallProtection.add(player.getUniqueId());
         }
