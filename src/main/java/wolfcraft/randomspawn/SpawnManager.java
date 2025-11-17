@@ -26,8 +26,6 @@ public class SpawnManager {
     private int zMin;
     private int zMax;
     private boolean forceGroundSpawn;
-    private boolean allowMidairSpawn;
-    private boolean preventFallDamage;
     private boolean enableFirstJoinSpawn;
     private boolean enableRespawnOnDeath;
     private int maxTries;
@@ -51,8 +49,6 @@ public class SpawnManager {
         yMax = config.getInt("spawn.y.max", 128);
         zMin = config.getInt("spawn.z.min", -1000);
         zMax = config.getInt("spawn.z.max", 1000);
-        forceGroundSpawn = config.getBoolean("spawn.force-ground-spawn", true);
-        allowMidairSpawn = config.getBoolean("spawn.allow-midair-spawn", false);
         preventFallDamage = config.getBoolean("spawn.prevent-fall-damage", false);
         enableFirstJoinSpawn = config.getBoolean("events.first-join", true);
         enableRespawnOnDeath = config.getBoolean("events.respawn-on-death", true);
@@ -77,10 +73,6 @@ public class SpawnManager {
 
     public boolean isRespawnOnDeathEnabled() {
         return enableRespawnOnDeath;
-    }
-
-    public boolean isPreventFallDamageEnabled() {
-        return preventFallDamage;
     }
 
     public boolean isWorldEnabled(String worldName) {
@@ -173,7 +165,7 @@ public class SpawnManager {
         if (!forceGroundSpawn) {
             return block.getType().isAir() &&
                    blockAbove.getType().isAir() &&
-                   (!blockBelow.getType().isAir() || allowMidairSpawn) &&
+                   !blockBelow.getType().isAir() &&
                    !blockBelow.isLiquid() &&
                    !isFatalBlock(blockBelow.getType().toString());
         }

@@ -1,8 +1,5 @@
 package wolfcraft.randomspawn;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +7,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerListener implements Listener {
@@ -54,7 +50,6 @@ public class PlayerListener implements Listener {
 
                 if (randomLocation != null) {
                     event.setRespawnLocation(randomLocation);
-                    setFallingPlayer(player);
 
                     // If configured, transfer the player to another server after respawn
                     if (spawnManager.getTransferServerName() != null && !spawnManager.getTransferServerName().isEmpty()) {
@@ -73,31 +68,11 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        UUID uuid = player.getUniqueId();
-
-        if (spawnManager.isPreventFallDamageEnabled() && fallingSpawnedPlayers.contains(uuid) && player.isOnGround()) {
-                // The player has fall damage prevention enabled, is currently falling after a spawn,
-                // but has now touched ground, so we need to negate the fall damage and remove them from the falling players list
-                player.setFallDistance(0f);
-                fallingSpawnedPlayers.remove(uuid);
-        }  
-    }
-
     private void teleportToRandomSpawn(Player player) {
         Location randomLocation = spawnManager.getRandomSpawnLocation(player);
 
         if (randomLocation != null) {
             player.teleport(randomLocation);
-            setFallingPlayer(player);
-        }
-    }
-
-    private void setFallingPlayer(Player player) {
-        if (spawnManager.isPreventFallDamageEnabled()) {
-            fallingSpawnedPlayers.add(player.getUniqueId());
         }
     }
 }
